@@ -1,0 +1,58 @@
+###############
+# DEFINITIONS #
+###############
+
+# Bool
+# - tt x y -->* x.
+# - ff x y -->* y.
+def tt  = K;
+def ff  = S K;
+
+# Numeral
+# - (inc n) f x -->* f (n f x).
+# - _0 f x -->* x.
+# - _n f x -->* f (f (...(f x)...)).
+def inc = S (S (K S) K);
+def _0  = S K;
+def _1  = inc _0;
+def _2  = inc _1;
+def _3  = inc _2;
+
+##########
+# PART 2 #
+##########
+# TASK: Implement the following functions.
+
+# BEGIN_YOUR_CODE
+def or     = I;
+def and    = I;
+def not    = I;
+def is_odd = I;
+# END_YOUR_CODE
+
+#########
+# TESTS #
+#########
+# NOTE: Expected outputs are given as comments on each line.
+
+section_or; # This symbol will just be printed, so we can keep track of the output.
+(or tt tt) x y;  # x
+(or tt ff) x y;  # x
+(or ff tt) x y;  # x
+(or ff ff) x y;  # y
+
+section_and;
+(and tt tt) x y;  # x
+(and tt ff) x y;  # y
+(and ff tt) x y;  # y
+(and ff ff) x y;  # y
+
+section_not;
+(not tt) x y;  # y
+(not ff) x y;  # x
+
+section_is_odd;
+(is_odd _0) x y;  # y
+(is_odd _1) x y;  # x
+(is_odd _2) x y;  # y
+(is_odd _3) x y;  # x
