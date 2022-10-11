@@ -2,9 +2,6 @@
 # DEFINITIONS #
 ###############
 
-# Useful constants
-def c1 = S (S (K K) (S (K S) (S (K K) I))) (K (S (S (K S) (S (K K) I)) (K I)));
-def c2 = S ((c1 S (c1 K (c1 S (S (c1 c1 I) (K I)))))) (K (c1 K I));
 
 # Bool
 # - tt x y -->* x.
@@ -28,8 +25,8 @@ def _3  = inc _2;
 # TASK: Implement the following functions.
 
 # BEGIN_YOUR_CODE
-def or     = I;
-def and    = I;
+def or     = ((S ((S (K S)) ((S (K K)) ((S I) (K tt))))) (K (I)));
+def and    = ((S ((S (K (S))) ((S ((S (K (S))) ((S (K (K))) (I)))) (K (I))))) (K (K (ff))));
 def not    = (S ((S I) (K ff))) (K tt);
 def is_odd = I;
 # END_YOUR_CODE
