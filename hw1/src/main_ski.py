@@ -1,6 +1,6 @@
-
 # Allow importing student code from parent directory (outside of ./src)
 import sys, os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pathlib import Path
@@ -14,6 +14,7 @@ ski_syntax = Path('./src/ski_prog.lark').read_text()
 ski_parser = Lark(ski_syntax, start='start', parser='lalr')
 env = {}
 
+
 def ski_to_prog(fname, execute):
     if fname is None: return
 
@@ -22,7 +23,8 @@ def ski_to_prog(fname, execute):
         text = Path(fname).read_text()
     except Exception as err:
         print(">>>>> Error occurs when reading SKI file: '{}' <<<<<\n".format(fname))
-        print(err); exit(0)
+        print(err);
+        exit(0)
 
     # parse ski file.
     try:
@@ -30,7 +32,8 @@ def ski_to_prog(fname, execute):
         # print(tree.pretty())
     except Exception as err:
         print(">>>>> Syntax error occurs when parsing SKI file: '{}' <<<<<\n".format(fname))
-        print(err); exit(0)
+        print(err);
+        exit(0)
 
     # convert `tree` to `prog`.
     prog = ski_prog.TreeToProg().transform(tree)
@@ -40,14 +43,15 @@ def ski_to_prog(fname, execute):
         for defn in prog.defns:
             (s, e) = (defn.s, defn.e)
             e_subst = ski_prog.subst(e, env)
-            env[s]  = e_subst
+            env[s] = e_subst
 
     # evaluate expr block.
     if execute:
         for e in prog.es:
             e_subst = ski_prog.subst(e, env)
-            e_eval  = ski_eval_eval(e_subst)
+            e_eval = ski_eval_eval(e_subst)
             print(e_eval)
+
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
@@ -56,4 +60,4 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     ski_to_prog(args.include, False)
-    ski_to_prog(args.input  , True )
+    ski_to_prog(args.input, True)

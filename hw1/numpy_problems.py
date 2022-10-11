@@ -53,5 +53,6 @@ def matched(parentheses: np.ndarray) -> bool:
     # BEGIN_YOUR_CODE
     values = 1. * (parentheses == '(') - 1. * (parentheses == ')')
     cum_values = np.cumsum(values)
-    return np.logical_and(cum_values[-1] == 0, np.all(cum_values >= 0.))
+    return np.logical_and(cum_values[-1] == 0,
+                          np.all(cum_values >= 0.))
     # END_YOUR_CODE
