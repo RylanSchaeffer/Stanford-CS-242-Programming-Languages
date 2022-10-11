@@ -11,7 +11,7 @@ def c2 = S ((c1 S (c1 K (c1 S (S (c1 c1 I) (K I)))))) (K (c1 K I));
 # - ff x y -->* y.
 def tt  = K;
 def ff  = S K;
-def not = ??? F T;
+def not = ((S I) (K (F T)));
 def or = ;
 def not = ;
 def is odd:
