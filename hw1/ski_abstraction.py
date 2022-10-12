@@ -18,7 +18,7 @@ def abstract(expr: Tuple[str], x: str):
         expr = expr[0]
 
     if len(expr) == 1 and isinstance(expr[0], str) and expr[0] == x:
-        return 'I',
+        return ('I',)
     elif not x_is_in_expr(expr, x):
         return 'K', expr
     else:
@@ -26,8 +26,6 @@ def abstract(expr: Tuple[str], x: str):
         left_abstraction = abstract(expr=left_expr, x=x)
         right_expr = expr[-1:]
         right_abstraction = abstract(expr=right_expr, x=x)
-        if len(left_abstraction) == 0 or right_abstraction == 0:
-            print(1)
         return (('S', left_abstraction), right_abstraction)
 
 
