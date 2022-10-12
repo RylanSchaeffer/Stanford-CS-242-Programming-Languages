@@ -28,7 +28,7 @@ def _3  = inc _2;
 def or     = ((S ((S (K S)) ((S (K K)) ((S I) (K tt))))) (K (I)));
 def and    = ((S ((S (K (S))) ((S ((S (K (S))) ((S (K (K))) (I)))) (K (I))))) (K (K (ff))));
 def not    = (S ((S I) (K ff))) (K tt);
-def is_odd = I;
+def is_odd = (S ((S I) (K not))) (K ff);
 # END_YOUR_CODE
 
 #########
