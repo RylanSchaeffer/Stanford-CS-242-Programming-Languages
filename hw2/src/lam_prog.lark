@@ -1,0 +1,19 @@
+start: defns exprs
+defns: (defn ";")*
+exprs: (expr ";")*
+
+defn  : "def" VARSTR "=" expr
+?expr : sexpr
+      | expr sexpr          -> app
+?sexpr: VARSTR              -> var
+      | "\\" VARSTR "." expr -> lam
+      | "(" expr ")"
+
+LETTER: /[_a-z]/
+DIGIT : /[0-9]/
+VARSTR: LETTER (LETTER|DIGIT)*
+
+%ignore SPACE
+%ignore COMMENT
+SPACE  : /[ \t\f\r\n]/+
+COMMENT: /#[^\n]*/

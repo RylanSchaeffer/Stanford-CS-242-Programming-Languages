@@ -30,9 +30,4 @@ $$
 
 ## Is Odd
 
-$$
-\begin{align*}
-is_odd N &= \\
-&= 
-\end{align*}
-$$
+Abstract `A(n not ff, n)`.

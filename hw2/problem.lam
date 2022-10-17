@@ -1,0 +1,83 @@
+###############
+# DEFINITIONS #
+###############
+
+# Bool
+def tt   = \x.\y. x;
+def ff   = \x.\y. y;
+
+# Numeral
+def inc  = \n.\f.\x. f (n f x);
+def _0   = \f.\x. x;
+def _1   = inc _0;
+def _2   = inc _1;
+def _3   = inc _2;
+def _4   = inc _3;
+
+# Pair
+def pair = \x.\y.\f. f x y;
+def fst  = \p. p tt;
+def snd  = \p. p ff;
+
+# List
+def cons = \h.\t.\f.\x. f h (t f x);
+def nil  = \f.\x. x;
+
+##########
+# PART 4 #
+##########
+# TASK: Implement the following functions.
+
+# BEGIN_YOUR_CODE
+def is_zero  = \n. n;
+def len      = \l. l;
+def num_zero = \l. l;
+def fib      = \n. n;
+def dec      = \n. n;
+def half     = \n. n;
+# END_YOUR_CODE
+
+#########
+# TESTS #
+#########
+# NOTE: Expected outputs are given as comments on each line.
+
+section_is_zero; # This symbol will just be printed, so we can keep track of the output.
+(is_zero _0) x y;  # x
+(is_zero _1) x y;  # y
+(is_zero _2) x y;  # y
+(is_zero _3) x y;  # y
+
+section_len;
+(len nil) f x;                                # x
+(len (cons tt nil)) f x;                      # (f x)
+(len (cons tt (cons ff nil))) f x;            # (f (f x))
+(len (cons tt (cons ff (cons tt nil)))) f x;  # (f (f (f x)))
+
+section_num_zero;
+(num_zero nil) f x;                      # x
+(num_zero (cons _1 nil)) f x;            # x
+(num_zero (cons _0 nil)) f x;            # (f x)
+(num_zero (cons _0 (cons _1 nil))) f x;  # (f x)
+(num_zero (cons _0 (cons _0 nil))) f x;  # (f (f x))
+
+section_fib;
+(fib _0) f x;  # (f x)
+(fib _1) f x;  # (f (f x))
+(fib _2) f x;  # (f (f (f x)))
+(fib _3) f x;  # (f (f (f (f (f x)))))
+(fib _4) f x;  # (f (f (f (f (f (f (f (f x))))))))
+
+section_dec;
+(dec _0) f x;  # x
+(dec _1) f x;  # x
+(dec _2) f x;  # (f x)
+(dec _3) f x;  # (f (f x))
+(dec _4) f x;  # (f (f (f x)))
+
+section_half;
+(half _0) f x;  # x
+(half _1) f x;  # x
+(half _2) f x;  # (f x)
+(half _3) f x;  # (f x)
+(half _4) f x;  # (f (f x))
