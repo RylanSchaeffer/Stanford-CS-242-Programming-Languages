@@ -1,20 +1,24 @@
 class Expr(object):
     pass
 
+
 class S(Expr):
     # `S()` denotes the S combinator.
     __str__ = lambda self: "S"
     __repr__ = __str__
+
 
 class K(Expr):
     # `K()` denotes the K combinator.
     __str__ = lambda self: "K"
     __repr__ = __str__
 
+
 class I(Expr):
     # `I()` denotes the I combinator.
     __str__ = lambda self: "I"
     __repr__ = __str__
+
 
 class Var(Expr):
     # `Var("x")` denotes the variable x.
@@ -23,6 +27,7 @@ class Var(Expr):
 
     __str__ = lambda self: "{}".format(self.s)
     __repr__ = __str__
+
 
 class App(Expr):
     # `App(e1,e2)` denotes the application (e1 e2).
