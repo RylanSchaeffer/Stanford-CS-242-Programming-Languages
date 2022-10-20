@@ -6,6 +6,12 @@
 def tt   = \x.\y. x;
 def ff   = \x.\y. y;
 
+# Logical
+def not = \b. b ff tt;
+def or = \x.\y. (x tt y);
+def and = \x.\y. (x y ff);
+
+
 # Numeral
 def inc  = \n.\f.\x. f (n f x);
 def _0   = \f.\x. x;
@@ -13,6 +19,8 @@ def _1   = inc _0;
 def _2   = inc _1;
 def _3   = inc _2;
 def _4   = inc _3;
+def add  = \m.\n. m inc n;
+def mul = \m.\n. m (add n) _0;
 
 # Pair
 def pair = \x.\y.\f. f x y;
@@ -29,11 +37,12 @@ def nil  = \f.\x. x;
 # TASK: Implement the following functions.
 
 # BEGIN_YOUR_CODE
-def is_zero  = \n. n;
-def len      = \l. l;
-def num_zero = \l. l;
-def fib      = \n. n;
-def dec      = \n. n;
+def is_zero  = \n. n (and ff) tt ;
+def len      = \l. l (\x. inc) _0;
+def num_zero = \l. l (\x.\y. (is_zero x) (inc y) y) _0;
+def fib_helper = \p. pair (add (p fst) (p snd)) (p fst);
+def fib      = \n. (n fib_helper (pair _2 _1)) snd;
+def dec      = \n. n ;
 def half     = \n. n;
 # END_YOUR_CODE
 
