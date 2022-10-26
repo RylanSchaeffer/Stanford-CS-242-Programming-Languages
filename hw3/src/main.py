@@ -1,6 +1,6 @@
-
 # Allow importing student code from parent directory (outside of ./src)
 import sys, os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pathlib import Path
@@ -15,13 +15,14 @@ lam_syntax = Path('./src/lam_prog.lark').read_text()
 lam_parser = Lark(lam_syntax, start='start', parser='lalr')
 env = {}
 
+
 def lam_to_prog(fname, type_check, execute, echo_name: bool = False):
-    
     try:
         text = Path(fname).read_text()
     except Exception as err:
         print(">>>>> Error occured when reading: '{}' <<<<<\n".format(fname))
-        print(err); exit(0)
+        print(err);
+        exit(0)
 
     # parse
     try:
@@ -29,7 +30,8 @@ def lam_to_prog(fname, type_check, execute, echo_name: bool = False):
         # print(tree.pretty())
     except Exception as err:
         print(">>>>> Syntax error occured when parsing: '{}' <<<<<\n".format(fname))
-        print(err); exit(0)
+        print(err);
+        exit(0)
 
     # convert `tree` to `prog`.
     prog: lam.Prog = lam_prog.TreeToProg().transform(tree)
@@ -64,15 +66,15 @@ def lam_to_prog(fname, type_check, execute, echo_name: bool = False):
             eval_lam(prog)
         except lam.TypecheckingError as e:
             print(f">>> Warning: file {fname} runtime produced an error: {e} <<<")
-            
 
-        
-    
+
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("input", nargs='+', type=str, help="file")
-    argparser.add_argument("--no-type-check", dest='type_check', action='store_false', default=True, help="don't perform typechecking")
-    argparser.add_argument("--no-execute", dest='execute', action='store_false', default=True, help="don't execute any expressions")
+    argparser.add_argument("--no-type-check", dest='type_check', action='store_false', default=True,
+                           help="don't perform typechecking")
+    argparser.add_argument("--no-execute", dest='execute', action='store_false', default=True,
+                           help="don't execute any expressions")
     args = argparser.parse_args()
 
     for i in args.input:
