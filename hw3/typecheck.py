@@ -182,17 +182,22 @@ def canonicalize_recursive(saturated_constraints: Set[Tuple[Type, Type]],
         )
         return_type = TpFunc(a=canonicalized_input, b=canonicalized_output)
     elif any([t == constraint[0] for constraint in saturated_constraints]):
+        flag = False
         for constraint in saturated_constraints:
-            if t == constraint[0] and not isinstance(constraint[0], TpVar):
+            if t == constraint[0] and not isinstance(constraint[1], TpVar):
                 return_type = canonicalize_recursive(
                     saturated_constraints=saturated_constraints,
                     t=constraint[1],
                     types_being_canonicalized=types_being_canonicalized)
-            elif t == constraint[0] and constraint[0].s < t.s:
+                flag = True
+            if t == constraint[0] and constraint[0].s < t.s:
                 return_type = canonicalize_recursive(
                     saturated_constraints=saturated_constraints,
                     t=constraint[1],
                     types_being_canonicalized=types_being_canonicalized)
+                flag = True
+        if not flag:
+            return_type = t
     else:
         return_type = t
 
