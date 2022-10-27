@@ -1,23 +1,27 @@
 from src.lam import *
 from typing import Dict, List, Set, Tuple
 
+variable_counter = 0
+
 
 def typecheck(prog: Prog) -> List[Type]:
+
+    global variable_counter
+    # Make sure to reset variable counter per program.
+    variable_counter = 0
+
     # Maps from variables to types
     type_context = dict()
     constraints = set()
     definition_types = []
-    variable_counter = 0
 
     # Step 1: Construct constraints & definition types
     for definition in prog.defns:
         definition_type, definition_constraints = generate_constraints(
             type_context=type_context,
-            e=definition.e,
-            variable_counter=variable_counter)
+            e=definition.e)
         definition_types.append(definition_type)
         constraints.update(definition_constraints)
-        # TODO: Where do we add a newly declared function?
         type_context[definition.s] = definition_type
 
     # Step 2: Saturate Constraints
@@ -34,8 +38,9 @@ def typecheck(prog: Prog) -> List[Type]:
 
 def generate_constraints(type_context: Dict[str, Type],
                          e: Expr,
-                         variable_counter: int,
                          ) -> Tuple[Type, Set[Tuple[Type, Type]]]:
+
+    global variable_counter
 
     # Start with no additional constraints, then add as necessary.
     constraints = set()
@@ -49,6 +54,7 @@ def generate_constraints(type_context: Dict[str, Type],
             raise TypecheckingError(f"Variable {e.s} is not defined.")
         else:
             e_type = type_context[e.s]
+
     elif isinstance(e, Lam):
 
         fresh_var_type = TpVar(s='a' + str(variable_counter))
@@ -59,8 +65,7 @@ def generate_constraints(type_context: Dict[str, Type],
 
         output_type, output_type_constraints = generate_constraints(
             type_context=copied_type_context,
-            e=e.e,
-            variable_counter=variable_counter)
+            e=e.e)
         constraints.update(output_type_constraints)
         e_type = TpFunc(a=fresh_var_type, b=output_type)
 
@@ -70,19 +75,14 @@ def generate_constraints(type_context: Dict[str, Type],
         fresh_var_type = TpVar(s='a' + str(variable_counter))
         variable_counter += 1
 
-        # # Add the new variable to the type context.
-        # copied_type_context = type_context.copy()
-
         # Recurse on e_1 and e_2.
         function_type, function_type_constraints = generate_constraints(
             type_context=type_context,
-            e=e.e1,
-            variable_counter=variable_counter)
+            e=e.e1)
 
         function_input_type, function_input_type_constraints = generate_constraints(
             type_context=type_context,
-            e=e.e2,
-            variable_counter=variable_counter)
+            e=e.e2)
 
         # Add constraints.
         constraints.update(function_type_constraints)
@@ -90,7 +90,7 @@ def generate_constraints(type_context: Dict[str, Type],
         new_func_type = TpFunc(a=function_input_type, b=fresh_var_type)
         constraints.add((function_type, new_func_type))
 
-        e_type = new_func_type
+        e_type = fresh_var_type
 
     else:
         raise NotImplementedError
@@ -100,7 +100,6 @@ def generate_constraints(type_context: Dict[str, Type],
 
 def saturate_constraints(constraints: Set[Tuple[Type, Type]],
                          ) -> Set[Tuple[Type, Type]]:
-
     prev_num_constraints = -1
     saturated_constraints = constraints.copy()
 
@@ -140,7 +139,6 @@ def saturate_constraints(constraints: Set[Tuple[Type, Type]],
 
 def canonicalize_definitions(definition_types: List[Type],
                              saturated_constraints: Set[Tuple[Type, Type]]) -> List[Type]:
-
     # We first need to check that there is no equality between int and a function type. If there is, the constraints
     # have no solution, and the program is ill-typed.
     for constraint in saturated_constraints:
@@ -161,7 +159,6 @@ def canonicalize_definitions(definition_types: List[Type],
 def canonicalize_recursive(saturated_constraints: Set[Tuple[Type, Type]],
                            t: Type,
                            types_being_canonicalized: Set[Type]) -> Type:
-
     if t in types_being_canonicalized:
         raise TypecheckingError(f"Infinite loop.")
     else:
