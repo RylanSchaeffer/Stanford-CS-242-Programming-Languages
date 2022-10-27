@@ -18,17 +18,16 @@ def typecheck(prog: Prog) -> List[Type]:
             variable_counter=variable_counter)
         definition_types.append(definition_type)
         constraints.update(definition_constraints)
+        # TODO: Where do we add a newly declared function?
+        type_context[definition.s] = definition_type
 
     # Step 2: Saturate Constraints
-    saturated_constraints = saturate_constraints(constraints)
+    saturated_constraints = saturate_constraints(constraints=constraints)
 
     # Step 3: Typecheck
     canonicalize_definitions(
-        definitions=prog.defns,
+        definition_types=definition_types,
         saturated_constraints=saturated_constraints)
-
-    # # Otherwise, throw TypecheckingError("msg")
-    # raise TypecheckingError('not implemented')
 
     # If there are no type errors, return a list of Types
     return definition_types
@@ -139,22 +138,22 @@ def saturate_constraints(constraints: Set[Tuple[Type, Type]],
     return saturated_constraints
 
 
-def canonicalize_definitions(definitions: List[Defn],
+def canonicalize_definitions(definition_types: List[Type],
                              saturated_constraints: Set[Tuple[Type, Type]]) -> List[Type]:
 
     # We first need to check that there is no equality between int and a function type. If there is, the constraints
     # have no solution, and the program is ill-typed.
     for constraint in saturated_constraints:
         if isinstance(constraint[0], TpInt) and isinstance(constraint[1], TpFunc):
-            raise TypecheckingError(f"Constraints have TpInt == TpFunc")
+            raise TypecheckingError(f"Constraint {constraint} has TpInt == TpFunc")
 
     # Canonicalize recursive.
     types_being_canonicalized = set()
-    # TODO: what do I start with? How do I return a list of definitions?
-    definition_types = canonicalize_recursive(
-        saturated_constraints=saturated_constraints,
-        t=10,  # TODO: What is my starting t?
-        types_being_canonicalized=types_being_canonicalized)
+    for definition_type in definition_types:
+        definition_types = canonicalize_recursive(
+            saturated_constraints=saturated_constraints,
+            t=definition_type,
+            types_being_canonicalized=types_being_canonicalized)
 
     return definition_types
 
@@ -164,36 +163,39 @@ def canonicalize_recursive(saturated_constraints: Set[Tuple[Type, Type]],
                            types_being_canonicalized: Set[Type]) -> Type:
 
     if t in types_being_canonicalized:
-        raise
+        raise TypecheckingError(f"Infinite loop.")
     else:
         types_being_canonicalized.add(t)
 
+    return_type = None
     if isinstance(t, TpInt):
-        return TpInt()
+        return_type = t
     elif isinstance(t, TpFunc):
         canonicalized_input = canonicalize_recursive(
             saturated_constraints=saturated_constraints,
-            t=t.b,
+            t=t.a,
             types_being_canonicalized=types_being_canonicalized)
         canonicalized_output = canonicalize_recursive(
             saturated_constraints=saturated_constraints,
             t=t.b,
             types_being_canonicalized=types_being_canonicalized,
         )
-        return TpFunc(a=canonicalized_input, b=canonicalized_output)
-    else:
+        return_type = TpFunc(a=canonicalized_input, b=canonicalized_output)
+    elif any([t == constraint[0] for constraint in saturated_constraints]):
         for constraint in saturated_constraints:
             if t == constraint[0] and not isinstance(constraint[0], TpVar):
-                canonicalized_type = canonicalize_recursive(
+                return_type = canonicalize_recursive(
                     saturated_constraints=saturated_constraints,
                     t=constraint[1],
                     types_being_canonicalized=types_being_canonicalized)
-                return canonicalized_type
             elif t == constraint[0] and constraint[0].s < t.s:
-                canonicalized_type = canonicalize_recursive(
+                return_type = canonicalize_recursive(
                     saturated_constraints=saturated_constraints,
                     t=constraint[1],
                     types_being_canonicalized=types_being_canonicalized)
-                return canonicalized_type
-            else:
-                return t
+    else:
+        return_type = t
+
+    types_being_canonicalized.remove(t)
+    assert return_type is not None
+    return return_type

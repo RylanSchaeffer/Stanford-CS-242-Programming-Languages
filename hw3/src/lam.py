@@ -13,11 +13,15 @@ class Var(Expr):
 
     def __repr__(self): return "{}".format(self.s)
 
+    def __eq__(self, other) -> bool:
+        # Note: I added this myself.
+        return self.s == other.s
+
 
 # A definition is just a var and an expression
 class Defn:
     def __init__(self,
-                 s: Var,
+                 s: str,
                  e: Expr):
         self.s, self.e = s, e
 
