@@ -50,49 +50,44 @@ def generate_constraints(type_context: Dict[str, Type],
         else:
             e_type = type_context[e.s]
     elif isinstance(e, Lam):
-        # If this variable is not in the type context, then create a new
-        # Type and add it to the type context.
-        if e.s not in type_context:
-            input_type = TpVar(s='a' + str(variable_counter))
-            variable_counter += 1
-        else:
-            input_type = type_context[e.s]
 
-        new_type_context = type_context.copy()
-        new_type_context[e.s] = input_type
+        fresh_var_type = TpVar(s='a' + str(variable_counter))
+        variable_counter += 1
+
+        copied_type_context = type_context.copy()
+        copied_type_context[e.s] = fresh_var_type
 
         output_type, output_type_constraints = generate_constraints(
-            type_context=new_type_context,
+            type_context=copied_type_context,
             e=e.e,
             variable_counter=variable_counter)
         constraints.update(output_type_constraints)
-        e_type = TpFunc(a=input_type, b=output_type)
+        e_type = TpFunc(a=fresh_var_type, b=output_type)
 
     elif isinstance(e, App):
 
         # Create new variable type.
-        new_type = TpVar(s='a' + str(variable_counter))
+        fresh_var_type = TpVar(s='a' + str(variable_counter))
         variable_counter += 1
 
-        # Add the new variable to the type context.
-        new_type_context = type_context.copy()
-        new_type_context[str(e)] = new_type
+        # # Add the new variable to the type context.
+        # copied_type_context = type_context.copy()
 
         # Recurse on e_1 and e_2.
         function_type, function_type_constraints = generate_constraints(
-            type_context=new_type_context,
+            type_context=type_context,
             e=e.e1,
             variable_counter=variable_counter)
 
         function_input_type, function_input_type_constraints = generate_constraints(
-            type_context=new_type_context,
+            type_context=type_context,
             e=e.e2,
             variable_counter=variable_counter)
 
         # Add constraints.
         constraints.update(function_type_constraints)
         constraints.update(function_input_type_constraints)
-        new_func_type = TpFunc(a=function_input_type, b=new_type)
+        new_func_type = TpFunc(a=function_input_type, b=fresh_var_type)
         constraints.add((function_type, new_func_type))
 
         e_type = new_func_type
@@ -145,6 +140,7 @@ def saturate_constraints(constraints: Set[Tuple[Type, Type]],
 
 def canonicalize_definitions(definition_types: List[Type],
                              saturated_constraints: Set[Tuple[Type, Type]]) -> List[Type]:
+
     # We first need to check that there is no equality between int and a function type. If there is, the constraints
     # have no solution, and the program is ill-typed.
     for constraint in saturated_constraints:
@@ -165,6 +161,7 @@ def canonicalize_definitions(definition_types: List[Type],
 def canonicalize_recursive(saturated_constraints: Set[Tuple[Type, Type]],
                            t: Type,
                            types_being_canonicalized: Set[Type]) -> Type:
+
     if t in types_being_canonicalized:
         raise TypecheckingError(f"Infinite loop.")
     else:
