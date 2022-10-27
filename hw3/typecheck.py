@@ -73,7 +73,7 @@ def generate_constraints(type_context: Dict[str, Type],
     elif isinstance(e, App):
 
         # Create new variable type.
-        new_type = TpVar(s='a'+str(variable_counter))
+        new_type = TpVar(s='b'+str(variable_counter))
         variable_counter += 1
 
         # Add the new variable to the type context.
@@ -114,24 +114,28 @@ def saturate_constraints(constraints: Set[Tuple[Type, Type]],
     print(f'Number of Constraints: {len(constraints)}')
 
     while len(saturated_constraints) != prev_num_constraints:
+
         prev_num_constraints = len(saturated_constraints)
 
         # Note: Can't iterate over set while size is changing. Need to duplicate.
         for constraint in saturated_constraints.copy():
+
             # Reflexive:
             saturated_constraints.add((constraint[1], constraint[0]))
 
+            # Structural:
+            if isinstance(constraint[0], TpFunc) and isinstance(constraint[1], TpFunc):
+                # Inputs must match.
+                saturated_constraints.add((constraint[0].a, constraint[1].a))
+                # Outputs must match.
+                saturated_constraints.add((constraint[0].b, constraint[1].b))
+
             # Note: Can't iterate over set while size is changing. Need to duplicate.
-            for other_constraint in saturated_constraints:
+            for other_constraint in saturated_constraints.copy():
                 # Transitive:
-                if isinstance(constraint, TpVar) and isinstance(other_constraint, TpVar):
+                if isinstance(constraint[0], TpVar) and isinstance(other_constraint[0], TpVar):
                     if constraint[0] == other_constraint[0]:
-                        saturated_constraints.add((constraint[0], other_constraint[1]))
-                # Structural:
-                if isinstance(constraint, TpFunc) and isinstance(other_constraint, TpFunc):
-                    if constraint == other_constraint:
-                        saturated_constraints.add((constraint.a, other_constraint.a))
-                        saturated_constraints.add((constraint.b, other_constraint.b))
+                        saturated_constraints.add((constraint[1], other_constraint[1]))
 
     print(f'Number of Saturated Constraints: {len(saturated_constraints)}')
 
