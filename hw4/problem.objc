@@ -1,0 +1,76 @@
+# This file contains the object calculus problems that you must implement
+# for part one of the homework.
+
+# The first portion of the homework assignment centers around boolean
+# values and their encoding on the object calculus. The encoding we will
+# use is similar to the one in the lambda calculus. Intuitively, a boolean
+# is an object that selects one of two methods to invoke, whether it is
+# true or not. The definition of true and false is provided below.
+# We define booleans to be objects with 3 fields: ontrue, onfalse and eval.
+# ontrue and onfalse are fields to be overridden by users of the boolean,
+# who invoke eval on the boolean to select the true or false value.
+true = [eval = \o. o.ontrue, ontrue = \o.o, onfalse = \o.o];
+false = [eval = \o. o.onfalse, ontrue = \o.o, onfalse = \o.o];
+
+
+# Problem 1: Implement the boolean not operator. This is defined through a not-er
+# object that has a user-defined field b, the boolean to negate, and a field eval,
+# which returns the resulting negation of b.
+noter = [
+  eval = \n. [
+    eval = \o.o, # IMPLEMENT THIS METHOD.
+    ontrue = \o.o,
+    onfalse = \o.o
+  ],
+  b = \o.o
+];
+
+# Problem 2: Implement the boolean and operator. Similarly to above, this is defined
+# through an and-er object that takes the and of the two user-defined fields b1 and b2.
+ander = [
+  eval = \a. [
+    eval = \o.o, # IMPLEMENT THIS METHOD.
+    ontrue = \o.o,
+    onfalse = \o.o
+  ],
+  b1 = \o.o,
+  b2 = \o.o
+];
+
+# The second portion of the homework assignment is focused on an encoding
+# of the natural numbers in the object calculus. This encoding is different
+# than the church encoding used the SKI and lambda calculi. Rather than
+# representing a number n as n applications of a function f, the object
+# calculus encoding represents a number n as an object where n selections
+# of the field pred can be applied before the field iszero returns true.
+# Concretely, a natural number n is encoded by an object with at least three
+# fields iszero (returns whether or not n is zero), pred (returns n - 1)
+# and succ (returns n + 1). The encoding of zero is defined below, along
+# with using zero to obtain 1, 2, and 3.
+zero = [
+  iszero = \o. true,
+  pred = \o. o,
+  succ = \o. ((o.iszero <- \o. false).pred <- \x.o)
+];
+one = zero.succ;
+two = one.succ;
+
+# As an example of the above encoding, the expressions below should evaluate to
+# the corresponding values. They are currently commented out.
+# zero.iszero;          # [eval = \o.(o.ontrue), ...]
+# one.iszero;           # [eval = \o.(o.onfalse), ...]
+# one.pred.iszero;      # [eval = \o.(o.ontrue), ...]
+# two.pred.pred.iszero; # [eval = \o.(o.ontrue), ...]
+
+# Problem 3: Implement addition between natural numbers encoded in the object
+# calculus. This is done through an adder object that adds the user defined fields
+# n1 and n2 together.
+adder = [
+  eval = \a. ([
+    iszero = \o. o, # IMPLEMENT THIS METHOD.
+    pred = \o. o, # IMPLEMENT THIS METHOD.
+    succ = \o. o # IMPLEMENT THIS METHOD.
+  ]),
+  n1 = \o.o,
+  n2 = \o.o
+];

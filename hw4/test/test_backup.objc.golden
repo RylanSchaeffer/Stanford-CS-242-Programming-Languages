@@ -1,0 +1,5 @@
+o = [backup = \x.((x.retrieve <- \y.(x))), retrieve = \x.(x)];
+[backup = \x.((x.retrieve <- \y.(x))), retrieve = \x.(x)];
+o1 = [backup = \x.((x.retrieve <- \y.(x))), retrieve = \y.([backup = \x.((x.retrieve <- \y.(x))), retrieve = \x.(x)])];
+o2 = [backup = \x.((x.retrieve <- \y.(x))), newdata = \o_0.(o_0), retrieve = \y.([backup = \x.((x.retrieve <- \y.(x))), retrieve = \x.(x)])];
+[backup = \x.((x.retrieve <- \y_0.(x))), retrieve = \x.(x)];

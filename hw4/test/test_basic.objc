@@ -1,0 +1,10 @@
+START VERIFY;
+# Test free variables don't step.
+x;
+# Objects don't step.
+x = [f1 = \o.o];
+# Basic method invocation.
+x.f1;
+# Basic method override.
+x.f2 <- \o.[];
+STOP VERIFY;

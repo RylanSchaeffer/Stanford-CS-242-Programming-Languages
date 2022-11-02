@@ -1,0 +1,9 @@
+START VERIFY;
+
+o = [ retrieve = \x.x, backup = \x. x.retrieve <- \y.x ];
+o.retrieve;
+o1 = o.backup;
+o2 = o1.newdata <- \o.o;
+o2.retrieve;
+
+STOP VERIFY;

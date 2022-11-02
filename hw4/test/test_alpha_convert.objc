@@ -1,0 +1,5 @@
+START VERIFY;
+# Test that alpha conversion is being performed.
+x = [f1 = \o.o];
+[f2 = \o. x.f1].f2;
+STOP VERIFY;

@@ -1,0 +1,33 @@
+# Tests for not.
+START VERIFY;
+TEST_NOT;
+((((noter.b <- \o.true).eval).ontrue <- \o.YES).onfalse <- \o.NO).eval; # Should be NO.
+((((noter.b <- \o.false).eval).ontrue <- \o.YES).onfalse <- \o.NO).eval; # Should be YES.
+STOP VERIFY;
+
+# Tests for and.
+START VERIFY;
+TEST_AND;
+(((((ander.b1 <- \x.true).b2 <- \x.true).eval).ontrue <- \o.YES).onfalse <- \o.NO).eval; # Should be YES.
+(((((ander.b1 <- \x.true).b2 <- \x.false).eval).ontrue <- \o.YES).onfalse <- \o.NO).eval; # Should be NO.
+(((((ander.b1 <- \x.false).b2 <- \x.true).eval).ontrue <- \o.YES).onfalse <- \o.NO).eval; # Should be NO.
+(((((ander.b1 <- \x.false).b2 <- \x.false).eval).ontrue <- \o.YES).onfalse <- \o.NO).eval; # Should be NO.
+STOP VERIFY;
+
+# Tests for add.
+START VERIFY;
+TEST_ADD;
+
+# 1 + 0.
+((((((adder.n1 <- \o.one).n2 <- \o.zero).eval).iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # NO
+((((((adder.n1 <- \o.one).n2 <- \o.zero).eval).pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
+((((((adder.n1 <- \o.one).n2 <- \o.zero).eval).succ.pred.pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
+
+# 0 + 1.
+((((((adder.n1 <- \o.zero).n2 <- \o.one).eval).iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # NO
+((((((adder.n1 <- \o.zero).n2 <- \o.one).eval).pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
+
+# 2 + 2.
+((((((adder.n1 <- \o.two).n2 <- \o.two).eval).pred.pred.pred.pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
+((((((adder.n1 <- \o.two).n2 <- \o.two).eval).pred.pred.pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # NO
+STOP VERIFY;

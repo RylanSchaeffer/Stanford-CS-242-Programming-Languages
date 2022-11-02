@@ -1,0 +1,39 @@
+start: stmts
+stmts: (stmt ";")*
+
+stmt : defn
+     | expr
+     | start_verify
+     | stop_verify
+
+defn : var "=" expr
+
+start_verify : "START" "VERIFY"
+stop_verify : "STOP" "VERIFY"
+
+expr : var
+     | field_access
+     | method_override
+     | paren_expr
+     | object_defn
+
+var: VARSTR
+field_access: expr "." VARSTR
+method_override: expr "." VARSTR "<" "-" func
+paren_expr: "(" expr ")"
+object_defn: "[" ((VARSTR "="  func) ("," VARSTR "=" func)* ","?)? "]"
+
+func : "\\" var "." expr
+     | paren_func
+
+paren_func : "(" func ")"
+
+
+LETTER: /[_a-zA-Z]/
+DIGIT : /[0-9]/
+VARSTR: LETTER (LETTER|DIGIT)*
+
+%ignore SPACE
+%ignore COMMENT
+SPACE  : /[ \t\f\r\n]/+
+COMMENT: /#[^\n]*/

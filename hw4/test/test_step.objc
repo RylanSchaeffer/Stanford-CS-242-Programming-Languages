@@ -1,0 +1,8 @@
+START VERIFY;
+
+y = z; # Should not step.
+x = [l1 = \o.o]; # Should not step.
+y = x.l1.l1.l1; # Can take steps.
+z = (((x.l1 <- \o.o).l1 <- \o.o).l1 <- \o.o); # Can take steps.
+
+STOP VERIFY;

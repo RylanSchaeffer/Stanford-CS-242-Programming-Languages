@@ -1,0 +1,7 @@
+START VERIFY;
+
+x = [l1 = \o.o, l2 = \o.o];
+y = [l1 = \o.x, l2 = \o.x];
+z = y.l1;
+
+STOP VERIFY;
