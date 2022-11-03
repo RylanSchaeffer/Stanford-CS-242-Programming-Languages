@@ -77,7 +77,7 @@ def subst(e1: objc.Expr, x: objc.Var, e2: objc.Expr) -> objc.Expr:
     elif isinstance(e1, objc.Object):  # Rule 3
         new_obj = e1.clone()
         for field, method in e1.fields.items():
-            new_obj.fields[field] = subst(e1=method, x=x, e2=e2)
+            new_obj.fields[field] = subst_method(f=method, x=x, e=e2)
         return new_obj
     elif isinstance(e1, objc.FieldAccess):  # Rule 4
         return objc.FieldAccess(
@@ -90,7 +90,7 @@ def subst(e1: objc.Expr, x: objc.Var, e2: objc.Expr) -> objc.Expr:
             method=subst_method(e1.method, x, e2),
         )
     else:
-        raise ValueError
+        raise ValueError(type(e1))
 
 
 # try_step implements the small-step operational semantics for the
@@ -107,7 +107,7 @@ def try_step(e: objc.Expr) -> Optional[objc.Expr]:
                 new_object.fields[field] = subst(
                     e1=method.body,
                     x=method.var,
-                    e2=new_object,  # TODO
+                    e2=new_object,  # Is this correct?
                 )
             return new_object
         else:
