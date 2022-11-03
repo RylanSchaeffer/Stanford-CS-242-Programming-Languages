@@ -100,20 +100,26 @@ def subst(e1: objc.Expr, x: objc.Var, e2: objc.Expr) -> objc.Expr:
 def try_step(e: objc.Expr) -> Optional[objc.Expr]:
 
     if isinstance(e, objc.FieldAccess):
-        if isinstance(e, objc.Object):
-            new_object = e.clone()
+        e_child = e.expr
+        if isinstance(e_child, objc.Object):
+            new_object = e_child.clone()
             for field, method in new_object.fields.items():
                 new_object.fields[field] = subst(
-                    e,
-                    x=,
-                    e2
+                    e1=method.body,
+                    x=method.var,
+                    e2=new_object,  # TODO
                 )
+            return new_object
         else:
-            return try_step(e.expr)
-
-
+            return try_step(e_child)
     elif isinstance(e, objc.MethodOverride):
-
+        e_child = e.expr
+        if isinstance(e_child, objc.Object):
+            new_object = e_child.clone()
+            new_object.fields[e.field] = e.method
+            return new_object
+        else:
+            return try_step(e_child)
     else:
         return None
 
