@@ -18,7 +18,7 @@ false = [eval = \o. o.onfalse, ontrue = \o.o, onfalse = \o.o];
 # which returns the resulting negation of b.
 noter = [
   eval = \n. [
-    eval = \o.o, # IMPLEMENT THIS METHOD.
+    eval = \o. ((n.b.ontrue <- \d. o.onfalse).onfalse <- \d. o.ontrue).eval,
     ontrue = \o.o,
     onfalse = \o.o
   ],
