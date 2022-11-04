@@ -20,8 +20,8 @@ def free_vars(e: objc.Expr) -> Set[objc.Var]:
         return {e}
     elif isinstance(e, objc.Object):
         result = set()
-        for field_name, field in e.fields.items():
-            field_free_vars = free_vars(field)
+        for field, method in e.fields.items():
+            field_free_vars = free_vars(method)
             result = result.union(field_free_vars)
         return result
     elif isinstance(e, objc.FieldAccess):

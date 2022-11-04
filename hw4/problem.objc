@@ -29,7 +29,7 @@ noter = [
 # through an and-er object that takes the and of the two user-defined fields b1 and b2.
 ander = [
   eval = \a. [
-    eval = \o.o, # IMPLEMENT THIS METHOD.
+    eval = \o. ((((a.b1.ontrue <- \d. a.b2.ontrue).eval).ontrue <- \d. o.ontrue).onfalse <- \d. o.onfalse).eval,
     ontrue = \o.o,
     onfalse = \o.o
   ],
@@ -44,7 +44,7 @@ ander = [
 # calculus encoding represents a number n as an object where n selections
 # of the field pred can be applied before the field iszero returns true.
 # Concretely, a natural number n is encoded by an object with at least three
-# fields iszero (returns whether or not n is zero), pred (returns n - 1)
+# fields: iszero (returns whether or not n is zero), pred (returns n - 1)
 # and succ (returns n + 1). The encoding of zero is defined below, along
 # with using zero to obtain 1, 2, and 3.
 zero = [
@@ -67,10 +67,13 @@ two = one.succ;
 # n1 and n2 together.
 adder = [
   eval = \a. ([
-    iszero = \o. o, # IMPLEMENT THIS METHOD.
-    pred = \o. o, # IMPLEMENT THIS METHOD.
-    succ = \o. o # IMPLEMENT THIS METHOD.
+    iszero = \o. ((ander.b1 <- \d. o.n1.iszero).b2 <- \d. o.n2.iszero).eval,
+    pred = \o. ((o.n1.iszero.ontrue <- \d. (o.n2 <- \d . o.n2.pred)).onfalse <- \d. (o.n1 <- \d . o.n1.pred)).eval,
+    succ = \o. o.n1 <- \d. o.n1.succ,
+    n1 = \o. a.n1,
+    n2 = \o. a.n2,
   ]),
   n1 = \o.o,
   n2 = \o.o
 ];
+
