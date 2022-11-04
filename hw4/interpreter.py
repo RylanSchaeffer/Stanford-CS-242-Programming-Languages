@@ -98,19 +98,18 @@ def subst(e1: objc.Expr, x: objc.Var, e2: objc.Expr) -> objc.Expr:
 # if the expression cannot take a step, or e', where e -> e' in one
 # step.
 def try_step(e: objc.Expr) -> Optional[objc.Expr]:
-
     if isinstance(e, objc.FieldAccess):
         recurse_val = try_step(e=e.expr)
         if recurse_val is None:
-            # We know the expr cannot be stepped further.
-            # Substitute into jth field and return.
-            assert isinstance(e.expr, objc.Object)
             return subst(e1=e.expr.fields[e.field].body,
                          x=e.expr.fields[e.field].var,
                          e2=e.expr)
+
         else:
-            # Update insides to be whatever was returned
-            return objc.FieldAccess(expr=e.expr, field=e.field)
+            return objc.FieldAccess(
+                expr=recurse_val,
+                field=e.field)
+
     elif isinstance(e, objc.MethodOverride):
         recurse_val = try_step(e=e.expr)
         if recurse_val is None:
@@ -120,7 +119,7 @@ def try_step(e: objc.Expr) -> Optional[objc.Expr]:
             return new_obj
         else:
             return objc.MethodOverride(
-                expr=e.expr,
+                expr=recurse_val,
                 field=e.field,
                 method=e.method)
 
