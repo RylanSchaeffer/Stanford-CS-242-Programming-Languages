@@ -100,26 +100,29 @@ def subst(e1: objc.Expr, x: objc.Var, e2: objc.Expr) -> objc.Expr:
 def try_step(e: objc.Expr) -> Optional[objc.Expr]:
 
     if isinstance(e, objc.FieldAccess):
-        e_child = e.expr
-        if isinstance(e_child, objc.Object):
-            new_object = e_child.clone()
-            for field, method in new_object.fields.items():
-                new_object.fields[field] = subst(
-                    e1=method.body,
-                    x=method.var,
-                    e2=new_object,  # Is this correct?
-                )
-            return new_object
+        recurse_val = try_step(e=e.expr)
+        if recurse_val is None:
+            # We know the expr cannot be stepped further.
+            # Substitute into jth field and return.
+            assert isinstance(e.expr, objc.Object)
+            return subst(e1=e.expr.fields[e.field].body,
+                         x=e.expr.fields[e.field].var,
+                         e2=e.expr)
         else:
-            return try_step(e_child)
+            # Update insides to be whatever was returned
+            return objc.FieldAccess(expr=e.expr, field=e.field)
     elif isinstance(e, objc.MethodOverride):
-        e_child = e.expr
-        if isinstance(e_child, objc.Object):
-            new_object = e_child.clone()
-            new_object.fields[e.field] = e.method
-            return new_object
+        recurse_val = try_step(e=e.expr)
+        if recurse_val is None:
+            assert isinstance(e.expr, objc.Object)
+            new_obj = e.expr.clone()
+            new_obj.fields[e.field] = e.method
+            return new_obj
         else:
-            return try_step(e_child)
+            return objc.MethodOverride(
+                expr=e.expr,
+                field=e.field,
+                method=e.method)
+
     else:
         return None
-
