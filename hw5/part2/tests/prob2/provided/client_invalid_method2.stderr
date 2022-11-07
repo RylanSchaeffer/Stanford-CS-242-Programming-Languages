@@ -1,0 +1,5 @@
+error[E0599]: no method named `send_ack` found for struct `SynAcked` in the current scope
+  --> tests/prob2/provided/client_invalid_method2.rs:19:22
+   |
+19 |             synacked.send_ack(&mut server);
+   |                      ^^^^^^^^ method not found in `SynAcked`

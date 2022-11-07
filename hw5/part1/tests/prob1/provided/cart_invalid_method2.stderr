@@ -1,0 +1,5 @@
+error[E0599]: no method named `order` found for struct `NonEmpty` in the current scope
+  --> tests/prob1/provided/cart_invalid_method2.rs:14:22
+   |
+14 |             nonempty.order();
+   |                      ^^^^^ method not found in `NonEmpty`

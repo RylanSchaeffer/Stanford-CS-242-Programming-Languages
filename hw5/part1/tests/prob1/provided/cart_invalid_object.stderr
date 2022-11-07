@@ -1,0 +1,16 @@
+error[E0382]: use of moved value: `empty`
+  --> tests/prob1/provided/cart_invalid_object.rs:12:13
+   |
+9  |         Ok(empty) => {
+   |            ----- move occurs because `empty` has type `part1::prob1::cart::Empty`, which does not implement the `Copy` trait
+10 |             let _nonempty = empty.add_item(1);
+   |                                   ----------- `empty` moved due to this method call
+11 |             // `empty` object should not be used again.
+12 |             empty.add_item(1);
+   |             ^^^^^ value used here after move
+   |
+note: this function takes ownership of the receiver `self`, which moves `empty`
+  --> src/prob1/cart.rs
+   |
+   |     pub fn add_item(self, cost: u32) -> NonEmpty {
+   |                     ^^^^

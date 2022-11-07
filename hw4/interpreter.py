@@ -101,11 +101,14 @@ def try_step(e: objc.Expr) -> Optional[objc.Expr]:
     if isinstance(e, objc.FieldAccess):
         recurse_val = try_step(e=e.expr)
         if recurse_val is None:
+            # recurse_val is only None when e is an Object or a Var.
+            # Field-Access-Eval.
             return subst(e1=e.expr.fields[e.field].body,
                          x=e.expr.fields[e.field].var,
                          e2=e.expr)
 
         else:
+            # Field-Access-Step.
             return objc.FieldAccess(
                 expr=recurse_val,
                 field=e.field)
@@ -113,6 +116,7 @@ def try_step(e: objc.Expr) -> Optional[objc.Expr]:
     elif isinstance(e, objc.MethodOverride):
         recurse_val = try_step(e=e.expr)
         if recurse_val is None:
+            # This will only occur if e.expr is an Object
             assert isinstance(e.expr, objc.Object)
             new_obj = e.expr.clone()
             new_obj.fields[e.field] = e.method

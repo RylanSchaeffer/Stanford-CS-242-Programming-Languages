@@ -1,0 +1,16 @@
+error[E0382]: use of moved value: `syned`
+  --> tests/prob2/provided/client_invalid_object.rs:16:13
+   |
+13 |         Ok (syned) => {
+   |             ----- move occurs because `syned` has type `Syned`, which does not implement the `Copy` trait
+14 |             let _synacked = syned.send_ack(&mut server);
+   |                                   --------------------- `syned` moved due to this method call
+15 |             // `syned` object should not be used again.
+16 |             syned.send_ack(&mut server);
+   |             ^^^^^ value used here after move
+   |
+note: this function takes ownership of the receiver `self`, which moves `syned`
+  --> src/prob2/client.rs
+   |
+   |     pub fn send_ack(self, server: &mut Server) -> SynAcked {
+   |                     ^^^^
