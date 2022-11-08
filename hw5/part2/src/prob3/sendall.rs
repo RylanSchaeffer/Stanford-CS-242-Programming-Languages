@@ -38,11 +38,10 @@ pub fn send_all(server: &mut Server, pkts: &Vec<Pkt>) {
 // Connect the client to the server. This function should ensure that the server acknowledges the
 // connection before returning a Syned client.
 fn try_syn(server: &mut Server, client: Initial) -> Syned {
-    // TODO: Implement this function
     //===== BEGIN_CODE =====//
     let mut result = client;
     loop {
-        // let result: Result<Syned,Initial> = result.send_syn(server);
+        println!("try_syn");
         match result.send_syn(server) {
             Ok(val) => return val,
             Err(val) => result = val,
@@ -54,17 +53,32 @@ fn try_syn(server: &mut Server, client: Initial) -> Syned {
 // Use the client to reliably send the given packets to the server. This function should ensure that
 // all packets have been delivered to the server.
 fn try_pkts(server: &mut Server, client: SynAcked, pkts: &Vec<Pkt>) -> SynAcked {
-    // TODO: Implement this function
     //===== BEGIN_CODE =====//
-    unimplemented!()
+    let mut original_pkts = pkts.clone();
+    let mut remaining = client;
+    loop {
+        println!("try_pkts");
+        remaining = remaining.send_pkts(server, &original_pkts);
+        original_pkts = pkts_remove(&original_pkts, &remaining.ids_sent());
+        if original_pkts.is_empty() {
+            return remaining;
+        }
+    }
+
     //===== END_CODE =====//
 }
 
 // Close the client connection to the server. The function should ensure that the server
 // acknowledges the end of the connection before returning a Closed client.
 fn try_close(server: &mut Server, client: SynAcked) -> Closed {
-    // TODO: Implement this function
     //===== BEGIN_CODE =====//
-    unimplemented!()
+    let mut result = client;
+    loop {
+        println!("try_close");
+        match result.send_close(server) {
+            Ok(val) => return val,
+            Err(val) => result = val,
+        }
+    }
     //===== END_CODE =====//
 }
