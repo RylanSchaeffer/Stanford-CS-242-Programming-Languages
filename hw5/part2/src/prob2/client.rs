@@ -56,7 +56,7 @@ impl Initial {
     }
 
     pub fn ids_sent(&self) -> Vec<u32> {
-        return self.sent_packet_ids;
+        return self.sent_packet_ids.clone();
     }
 }
 
@@ -68,7 +68,7 @@ impl Syned {
     }
 
     pub fn ids_sent(&self) -> Vec<u32> {
-        return self.sent_packet_ids;
+        return self.sent_packet_ids.clone();
     }
 
 }
@@ -76,21 +76,23 @@ impl Syned {
 impl SynAcked {
 
     pub fn send_pkts(self, server: &mut Server, packets: &Vec<Pkt>) -> SynAcked {
-        let new_sent_packet_ids: Vec<u32> = internal_send_pkts(server, packets);
+        // TODO: Check that this implementation is correct.
+        let mut new_sent_packet_ids: Vec<u32> = internal_send_pkts(server, packets);
         new_sent_packet_ids.extend(self.sent_packet_ids);
-        return SynAcked { sent_packet_ids: new_sent_packet_ids}
+        // TODO: Do I need to clone() here?
+        return SynAcked { sent_packet_ids: new_sent_packet_ids.clone()}
     }
 
     pub fn send_close(self, server: &mut Server) -> Result<Closed, SynAcked> {
-        let return_signal: Option<Sig> = internal_send_sig(server, Sig::Ack);
-        match return_signal {
-            Some(_) => return Ok(Closed{ sent_packet_ids: self.sent_packet_ids }),
-            None => return Err(SynAcked{ sent_packet_ids: self.sent_packet_ids }),
+        let return_signal: Option<Sig> = internal_send_sig(server, Sig::Close);
+        return match return_signal {
+            Some(_) => Ok(Closed { sent_packet_ids: self.sent_packet_ids }),
+            None => Err(SynAcked { sent_packet_ids: self.sent_packet_ids }),
         }
     }
 
     pub fn ids_sent(&self) -> Vec<u32> {
-        return self.sent_packet_ids;
+        return self.sent_packet_ids.clone();
     }
 
 }
@@ -103,7 +105,7 @@ impl Closed {
     }
 
     pub fn ids_sent(&self) -> Vec<u32> {
-        return self.sent_packet_ids;
+        return self.sent_packet_ids.clone();
     }
 
 }
