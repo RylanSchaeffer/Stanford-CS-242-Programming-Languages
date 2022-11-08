@@ -53,6 +53,7 @@ impl Initial {
             Some(_) => Ok(Syned { sent_packet_ids: self.sent_packet_ids }),
             None => Err(Initial { sent_packet_ids: self.sent_packet_ids }),
         }
+
     }
 
     pub fn ids_sent(&self) -> Vec<u32> {
@@ -80,7 +81,7 @@ impl SynAcked {
         let mut new_sent_packet_ids: Vec<u32> = internal_send_pkts(server, packets);
         new_sent_packet_ids.extend(self.sent_packet_ids);
         // TODO: Do I need to clone() here?
-        return SynAcked { sent_packet_ids: new_sent_packet_ids.clone()}
+        return SynAcked { sent_packet_ids: new_sent_packet_ids}
     }
 
     pub fn send_close(self, server: &mut Server) -> Result<Closed, SynAcked> {

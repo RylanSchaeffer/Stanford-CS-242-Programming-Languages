@@ -40,7 +40,14 @@ pub fn send_all(server: &mut Server, pkts: &Vec<Pkt>) {
 fn try_syn(server: &mut Server, client: Initial) -> Syned {
     // TODO: Implement this function
     //===== BEGIN_CODE =====//
-    unimplemented!()
+    let mut result = client;
+    loop {
+        // let result: Result<Syned,Initial> = result.send_syn(server);
+        match result.send_syn(server) {
+            Ok(val) => return val,
+            Err(val) => result = val,
+        }
+    }
     //===== END_CODE =====//
 }
 
