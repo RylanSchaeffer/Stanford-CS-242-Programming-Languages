@@ -1,5 +1,17 @@
 ### PROGRAMS ###
-from typing import List
+
+# A program is just a sequence of definitions
+class Prog:
+    def __init__(self, defns): self.defns = defns
+
+    def __repr__(self): return "\n".join(map(str, self.defns))
+
+
+# A definition is just a var and an expression
+class Defn:
+    def __init__(self, s, e): self.s, self.e = s, e
+
+    def __repr__(self): return "def {} = {};".format(self.s, self.e)
 
 
 ### Expressions ###
@@ -13,33 +25,9 @@ class Var(Expr):
 
     def __repr__(self): return "{}".format(self.s)
 
-    def __eq__(self, other) -> bool:
-        # Note: I added this myself.
-        return self.s == other.s
-
-
-# A definition is just a var and an expression
-class Defn:
-    def __init__(self,
-                 s: str,
-                 e: Expr):
-        self.s, self.e = s, e
-
-    def __repr__(self): return "def {} = {};".format(self.s, self.e)
-
-
-# A program is just a sequence of definitions
-class Prog:
-    def __init__(self,
-                 defns: List[Defn]):
-        self.defns = defns
-
-    def __repr__(self): return "\n".join(map(str, self.defns))
-
 
 class Lam(Expr):
-    def __init__(self, s: str, e: Expr):
-        self.s, self.e = s, e
+    def __init__(self, s: str, e: Expr): self.s, self.e = s, e
 
     def __repr__(self): return "\{}.{}".format(self.s, self.e)
 
@@ -69,26 +57,26 @@ class Type:
     def __hash__(self) -> int: raise NotImplementedError()
 
 
-class TpInt(Type):
+class IntTp(Type):
     def __eq__(self, other) -> bool:
-        return isinstance(other, TpInt)
+        return isinstance(other, IntTp)
 
     def __hash__(self): return hash('Int')
 
     def __repr__(self): return "int"
 
 
-class TpFunc(Type):
+class Func(Type):
     def __init__(self, a: Type, b: Type): self.a, self.b = a, b
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, TpFunc): return False
+        if not isinstance(other, Func): return False
         return self.a == other.a and self.b == other.b
 
     def __hash__(self): return hash(('Func', self.a, self.b))
 
     def __repr__(self):
-        a = self.a if not isinstance(self.a, TpFunc) else "({})".format(self.a)
+        a = self.a if not isinstance(self.a, Func) else "({})".format(self.a)
         return "{} -> {}".format(a, self.b)
 
 
@@ -110,13 +98,13 @@ class TpVar(Type):
 # if 'x' in CONSTS. Otherwise, it is a variable. The parser we have supplied will ensure
 # bound variables are never equal to constants.
 
-_I = TpInt()
+_I = IntTp()
 CONSTS = {
-    '+': TpFunc(_I, TpFunc(_I, _I)),
-    '-': TpFunc(_I, TpFunc(_I, _I)),
-    '/': TpFunc(_I, TpFunc(_I, _I)),
-    '*': TpFunc(_I, TpFunc(_I, _I)),
-    'ifz': TpFunc(_I, TpFunc(_I, TpFunc(_I, _I)))
+    '+': Func(_I, Func(_I, _I)),
+    '-': Func(_I, Func(_I, _I)),
+    '/': Func(_I, Func(_I, _I)),
+    '*': Func(_I, Func(_I, _I)),
+    'ifz': Func(_I, Func(_I, Func(_I, _I)))
 }
 
 

@@ -1,4 +1,6 @@
 from src.lam import *
+from src.lam import IntTp as TpInt
+from src.lam import Func as TpFunc
 from typing import Dict, List, Set, Tuple
 
 variable_counter = 0
