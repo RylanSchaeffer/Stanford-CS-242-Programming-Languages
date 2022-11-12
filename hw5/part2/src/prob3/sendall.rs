@@ -64,7 +64,6 @@ fn try_pkts(server: &mut Server, client: SynAcked, pkts: &Vec<Pkt>) -> SynAcked 
             return remaining;
         }
     }
-
     //===== END_CODE =====//
 }
 

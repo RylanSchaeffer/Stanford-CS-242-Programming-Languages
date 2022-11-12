@@ -39,9 +39,9 @@ pub struct Checkout {
 impl Cart {
     pub fn login(id: String, pw: String) -> Result<Empty,()> {
         let user: Option<u32> = internal_login(id, pw);
-        match user {
-            None => return Err(()),
-            Some(val) => return Ok(Empty{acct_num_val: val, tot_cost_val: 0}),
+        return match user {
+            None => Err(()),
+            Some(val) => Ok(Empty { acct_num_val: val, tot_cost_val: 0 }),
         }
     }
 }
