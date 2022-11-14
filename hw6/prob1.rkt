@@ -41,14 +41,23 @@
 ; Note: You can define any other helper functions.
 
 (define (throw msg)
-  (let* ([except_f (if (stack_empty?) (print "ThrowError\n") (stack_pop))]
-         [continuation (if (stack_empty?) (exit) (stack_pop))])
-         (continuation (except_f msg))
- )
+    (let* ([except_f (if (stack_empty?) (printf "ThrowError\n") (stack_pop))]
+           [k (if (stack_empty?) (exit) (stack_pop))])
+           (k (except_f msg))
+    )
 )
 
 
 ; Why does this fail Test 4?
 (define (try_except try_f except_f)
-  (call/cc (lambda (k) (stack_push k) (stack_push except_f) (k (try_f)) (stack_pop) (stack_pop)))
+  (call/cc (lambda (k)
+                (stack_push k)
+                (stack_push except_f)
+                (let*   ([result (try_f)])
+                        (stack_pop)
+                        (stack_pop)
+                        (k result)
+                )
+            )
+  )
 )
