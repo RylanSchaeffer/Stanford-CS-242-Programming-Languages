@@ -27,8 +27,6 @@
           [else (let* ([s (first e)]
                        [n1 (eval_one (second e))]
                        [n2 (eval_one (third e))])
-;                       (printf "~a\n" n1)
-;                       (printf "~a\n" n2)
                        (cond [(equal? s "+") (+ n1 n2)]
                              [(equal? s "-") (- n1 n2)]
                              [(equal? s "*") (* n1 n2)]
