@@ -37,8 +37,7 @@
     (call/cc  (lambda (continuation)
                 (stack_push continuation)
                 (stack_push (rest l))
-                continuation (first l)
-
+                (first l)
             )
     )
 )
