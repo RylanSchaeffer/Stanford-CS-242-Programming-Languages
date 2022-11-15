@@ -47,10 +47,8 @@
     )
 )
 
-
-; Why does this fail Test 4?
 (define (try_except try_f except_f)
-  (call/cc (lambda (k)
+    (call/cc (lambda (k)
                 (stack_push k)
                 (stack_push except_f)
                 (let*   ([result (try_f)])
@@ -59,5 +57,5 @@
                         (k result)
                 )
             )
-  )
+    )
 )

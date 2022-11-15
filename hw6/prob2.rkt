@@ -15,5 +15,25 @@
 ; Note: You can define any other helper functions.
 
 (define (eval e)
-  (void)
+    (try_except
+        (lambda() (eval_one e))
+        (lambda (msg) (printf "except: ~a\n" msg))
+    )
+)
+
+
+(define (eval_one e)
+    (cond [(number? e) e]
+          [else (let* ([s (first e)]
+                       [n1 (eval_one (second e))]
+                       [n2 (eval_one (third e))])
+;                       (printf "~a\n" n1)
+;                       (printf "~a\n" n2)
+                       (cond [(equal? s "+") (+ n1 n2)]
+                             [(equal? s "-") (- n1 n2)]
+                             [(equal? s "*") (* n1 n2)]
+                             [(equal? s "/") (if (equal? n2 0) (throw "DivError") (/ n1 n2))]
+                             [else (throw "OpError")]
+                       )
+                 )])
 )
