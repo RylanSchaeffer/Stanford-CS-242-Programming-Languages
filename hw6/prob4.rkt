@@ -80,5 +80,27 @@
 ; Note: You can define any other helper functions.
 
 (define (solve state)
-  (void)
+    (cond   [(is_invalid_state? state) #f]     ; State is invalid - don't need to try further
+            [(filled_all? state) state]          ; State is valid and filled in! Return state.
+            [else                                                       ; State is valid, but not filled in. Need to try new value and recurse.
+                (let* ( [new_pos (get_blank_pos state)]
+                        [new_num (attempt (list 1 2 3 4 5 6 7 8 9))]
+                        [new_state (add_num state new_pos new_num)]
+                        [new_state_result (solve new_state)]
+                        [b (assert (not (equal? #f new_state_result)))]
+                      )
+                      new_state_result
+                )
+            ]
+    )
+)
+
+
+
+(define (is_invalid_state? state)
+    (cond   [(not (valid_row? state)) #t]
+            [(not (valid_col? state)) #t]
+            [(not (valid_subg? state)) #t]
+            [else #f]
+    )
 )
