@@ -45,11 +45,11 @@
 
 (define (assert b)
     (if b
-        (#t)
+        #t
         (let* ([prev_tail (stack_pop)]
                [continuation (stack_pop)])
                (if (null? prev_tail)
-                    #f
+                    (assert b)
                     ((stack_push continuation)
                      (stack_push (rest prev_tail))
                      (continuation (first prev_tail)))
