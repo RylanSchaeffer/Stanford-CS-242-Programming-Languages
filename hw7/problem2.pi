@@ -1,0 +1,12 @@
+
+
+def FIXED_ECHO = 0; # Fill this in
+
+# Each client sends to the in channel, then gets a response, and then sends the
+# result to a unique channel (where it remains until the program can't be reduced).
+def CLIENT1 = &req. req -> in. a -> req. response <- req. response -> c1. 0;
+def CLIENT2 = &req. req -> in. b -> req. response <- req. response -> c2. 0;
+
+# Expected Output:
+# a -> c1. 0 | b -> c2. 0 | ...
+FIXED_ECHO | CLIENT1 | CLIENT2;

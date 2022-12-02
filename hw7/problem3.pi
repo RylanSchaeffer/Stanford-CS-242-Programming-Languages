@@ -1,0 +1,46 @@
+
+
+def VALUE = 0; # Fill this in
+
+
+
+# Some tests.
+def GET = &req. req -> get. current <- req. current -> result. 0;
+def SET_A_GET = &req. req -> set. a -> req. GET;
+def SET_AB_GET = &req. req -> set. a -> req. &req. req -> set. b -> req. GET;
+def SET_A_or_B_GET = &finished. (&req. req -> set. a -> req. void -> finished.0 |
+                                 &req. req -> set. b -> req. void -> finished.0 |
+                                 _ <- finished. _ <- finished. GET);
+
+def GET_GET = &req. req -> get. current <- req. current -> result1. 0
+            | &req. req -> get. current <- req. current -> result2. 0;
+def SET_A_GET_GET = &req. req -> set. a -> req. GET_GET;
+
+# Expected Output:
+#   a -> result. 0
+# | ...
+VALUE | SET_A_GET;
+
+
+# Expected Output:
+#   b -> result. 0
+# | ...
+VALUE | SET_AB_GET;
+
+# This tests two concurrent requests. The result depends on non-deterministic choice
+# Expected Output:
+# --- State 0 ---
+#   a -> result. 0
+# | ...
+# --- State 1 ---
+#   b -> result. 0
+# | ...
+VALUE | SET_A_or_B_GET;
+
+# Expected Output:
+#   a -> result1. 0
+# | a -> result2. 0
+# | ...
+VALUE | SET_A_GET_GET;
+
+

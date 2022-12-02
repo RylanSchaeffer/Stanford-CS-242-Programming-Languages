@@ -1,0 +1,4 @@
+
+(\x.\y. y) a b;
+# Expected output:
+# __result__ -> b. 0 | ...

@@ -1,0 +1,14 @@
+
+
+def ECHO = 0; # Fill this in
+
+# Each client sends to the in channel, then gets a response on the out channel.
+def CLIENT1 = a -> in. response <- out. response -> c1. 0;
+def CLIENT2 = b -> in. response <- out. response -> c2. 0;
+
+# Expected Output:
+# --- State 0 ---
+# a -> c1. 0 | b -> c2. 0 | ...
+# --- State 1 ---
+# b -> c1. 0 | a -> c2. 0 | ...
+ECHO | CLIENT1 | CLIENT2;

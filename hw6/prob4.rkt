@@ -87,7 +87,7 @@
                         [new_num (attempt (list 1 2 3 4 5 6 7 8 9))]
                         [new_state (add_num state new_pos new_num)]
                         [new_state_result (solve new_state)]
-                        [b (assert (not (equal? #f new_state_result)))]
+                        [b (assert (not (equal? #f new_state_result)))]  ; is the returned result a state? If it is a state, it has to be a valid state.
                       )
                       new_state_result
                 )

@@ -1,0 +1,30 @@
+
+# Note: all process definitions must start with a capital letter. All channels/values start with a lower case letter
+# Forms of processes:
+def Nothing   = 0;
+def Parallel  = P | Q;
+def Replicate = !P;
+def Send      = x -> c. P;  # This syntax is inspired by Go, because overlines are not easy to write in ASCII
+def Recv      = x <- c. P;  # Think of this as an assignment to x, i.e. <- is kind of like =
+def Nu        = &x. P;
+def Choice    = P + Q;
+def Eq        = [x = y]. P;
+def Neq       = [x != y]. P;
+
+def Association  = &x. P | Q;             # same as (&x. P) | Q
+def Association2 = x -> c. P | y <- c. Q; # same as (x -> c. P) | (y <- c. Q)
+def Association3 = [x=y]. y <- c. Q;      # same as [x=y]. (y <- c. Q)
+
+# The alternating example from the assignment.
+def ALT = !(c <- new. x <- c. y <- c. 
+                 x -> output. &c. c -> new. y -> c. x -> c. 0)
+          | &c. c -> new. a -> c. b -> c. 0;
+
+ALT | ( x <- output. (x -> o1. 0
+      | x <- output. (x -> o2. 0
+      | x <- output. (x -> o3. 0
+      | x <- output. (x -> o4. 0
+      | x <- output. (x -> o5. 0))))));
+
+# An example of using the choice operator
+[x = y]. P + [x = x]. Q + [x = z]. R;

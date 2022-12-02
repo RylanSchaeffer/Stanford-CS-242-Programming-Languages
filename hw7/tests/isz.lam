@@ -1,0 +1,11 @@
+def inc  = \n.\f.\x. f (n f x);
+def _0   = \f.\x. x;
+def _1   = inc _0;
+def _2   = inc _1;
+def tt   = \x.\y. x;
+def ff   = \x.\y. y;
+def is_zero  = \n. n (\_. ff) tt;
+
+(is_zero _2) y n;
+# Expected output:
+# __result__ -> n. 0 | ...

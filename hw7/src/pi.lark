@@ -1,0 +1,28 @@
+start: defns exprs
+defns: (defn ";")*
+exprs: (proc ";")*
+
+defn :  "def" CIDENT "=" proc
+?proc:  proc2 "|" proc -> parallel
+      | proc2
+
+?proc2: proc3 "+" proc2 -> choice
+      | proc3
+
+?proc3: "&" IDENT "." proc3 -> nu
+      | IDENT "->" IDENT "." proc3 -> send
+      | IDENT "<-" IDENT "." proc3 -> recv
+      | "!" proc3  -> rep
+      | "0"  -> nothing
+      | "[" IDENT "=" IDENT "]" "." proc3 -> eq
+      | "[" IDENT "!=" IDENT "]" "." proc3 -> neq
+      | CIDENT -> named_proc
+      | "(" proc ")"
+
+IDENT: /[_a-z][_a-z0-9]*/
+CIDENT: /[A-Z][_A-Za-z0-9]*/
+
+%ignore SPACE
+%ignore COMMENT
+SPACE  : /[ \t\f\r\n]/+
+COMMENT: /#[^\n]*/
