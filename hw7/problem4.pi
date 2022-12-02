@@ -7,7 +7,18 @@ def ZERO = !(&c. (_zero -> c.0 | c -> zero. 0));
 def ONE = !(&d. (_succ -> d. _zero -> d.0 | d -> one. 0));
 def TWO = !(&c. (_succ -> c. _succ -> c. _zero -> c.0 | c -> two. 0));
 
-def INC = 0; # Fill this in
+def INC = !(
+    channel <- inc . n <- channel . (
+        &new_channel . new_channel -> channel . (
+            &sem . (
+                (&lock . _succ -> new_channel . lock -> sem . 0)
+                |
+                (!lock <- sem . val <- n . val -> new_channel . lock -> sem . 0)
+            )
+        )
+    )
+);
+
 
 # Expected output: 
 #   _succ -> result. 0
