@@ -10,7 +10,6 @@ def translate(e: lam.Expr, channel: str) -> pi.Proc:
     global global_var_counter
 
     if isinstance(e, lam.Var):
-        # pi.Parallel([]) is how to express "do nothing"
         return pi.Send(
             x=channel,
             c=e.s,
@@ -39,9 +38,12 @@ def translate(e: lam.Expr, channel: str) -> pi.Proc:
 
         # Parallel options within outer ()
         p1 = translate(e=M, channel=c)
-        p2 = pi.Send(x=d, c=c, p=pi.Send(x=channel, c=d, p=pi.Parallel([])))
+        p2 = pi.Send(x=d, c=c, p=pi.Send(x=channel, c=c, p=pi.Parallel([])))
         p3 = pi.Replicate(p=pi.Receive(x=v, c=d, p=translate(e=N, channel=v)))
-        return pi.Nu(c, pi.Nu(d, pi.Parallel([p1, p2, p3])))
+        return pi.Nu(
+            s=c,
+            p=pi.Nu(s=d,
+                    p=pi.Parallel([p1, p2, p3])))
 
     else:
         raise ValueError('How the hell did you end up here?')
