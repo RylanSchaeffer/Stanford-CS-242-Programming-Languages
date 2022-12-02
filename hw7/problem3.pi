@@ -1,6 +1,25 @@
 
 
-def VALUE = 0; # Fill this in
+def VALUE = &sem. (
+    # INITIAL STATE
+    # The code here should receive the new value, and send it into `sem`.
+    # In other words, we are using `sem` both as a semaphore, and as
+    #   storage for the current value!
+    req <- set . val <- req . val -> sem . 0
+
+    |
+
+    # STEADY STATE
+    # We first receive the current value (and also acquire the lock).
+    # In case of `set`, we should send the new value into `sem`.
+    # In case of `get`, we should service the request, but then send the
+    #   original value into `sem` since the value did not change.
+
+    !val <- sem.
+     ((req <- set. new_val <- req . new_val -> sem . 0)
+      +
+      (req <- get . val -> req . val -> sem . 0))
+);
 
 
 
