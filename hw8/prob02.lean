@@ -22,6 +22,4 @@ begin
   apply eval.ELeft,
   apply eval.EOp,
   apply val.VNum,
-  -- apply eval.ELeft,
-  -- apply eval.EOp,
 end
