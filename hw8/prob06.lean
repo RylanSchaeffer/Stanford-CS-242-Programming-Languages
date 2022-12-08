@@ -18,9 +18,9 @@ begin
   },
   case Expr.Op {
     cases XepValAnde1Steps with e1_prime e1_prime_isval_and_e1_steps_to,
-    cases e1_prime with n1_prime e1_prime_op e1_prime_e1 e1_prime_e2,
+    cases e1_prime_isval_and_e1_steps_to.1 with n1_prime,
     cases XepValAnde2Steps with e2_prime e2_prime_isval_and_e2_steps_to,
-    cases e2_prime with n2_prime e2_prime_op e2_prime_e1 e2_prime_e2,
+    cases e2_prime_isval_and_e2_steps_to.1 with n2_prime,
     existsi Expr.Num (apply_op op n1_prime n2_prime),
     split,
     {
@@ -42,13 +42,6 @@ begin
       show Expr, from Expr.Num (apply_op op n1_prime n2_prime),
       apply eval.EOp,
       apply evals.CRefl,
-    }, {
-      -- existsi Expr.Num (apply_op op n1_prime n2_prime),
-      -- split,
-      -- apply val.VNum,
-      sorry,
-    }, {
-      sorry,
     }
-  }
+  },
 end
