@@ -45,12 +45,14 @@ begin
     apply eval.ELeft,
     apply eval.EOp,
     apply val.VNum,
+    -- The below lines show that e1_step can be stepped to e1_step_step
     apply evals.CStep,
     show Expr,
     from e1_step_step,
     apply eval.ERight,
     apply eval.EOp,
     apply val.VNum,
+    -- The below lines show that e1_step_step can be stepped to e2
     apply evals.CStep,
     show Expr,
     from e2,
