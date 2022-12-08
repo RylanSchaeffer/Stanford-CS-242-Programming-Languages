@@ -5,7 +5,6 @@ lemma transitive_left (op : Op) (e1 e1' e2 : Expr) :
   (e1 ↦* e1')
   → (Expr.Op op e1 e2 ↦* Expr.Op op e1' e2) :=
 begin
-  -- FILL IN HERE.
   intros t,
   induction t with crefl cstep a b c d e,
   case evals.CRefl {
