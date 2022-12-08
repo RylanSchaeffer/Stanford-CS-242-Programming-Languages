@@ -37,20 +37,11 @@ begin
     }
   },
   {
-    cases ihe2 with e2val e2expr,
-    {   -- This assumes e1 is an expr, but e2 is a val.
-      cases e1expr with e1expr1 e1expr2,
-      simp*,
-      existsi Expr.Op op e1expr1 e2,
-      apply eval.ELeft,
-      assumption,
-    },
-    {   -- This assumes both e1 and e2 are expr.
-      cases e1expr with e1expr1 e1expr2,
-      simp*,
-      existsi Expr.Op op e1expr1 e2,
-      apply eval.ELeft,
-      assumption,
-    }
+    -- This assumes both e1 is an expr and we don't care about e1.
+    cases e1expr with e1expr1 e1expr2,
+    simp*,
+    existsi Expr.Op op e1expr1 e2,
+    apply eval.ELeft,
+    assumption,
   }
 end 
